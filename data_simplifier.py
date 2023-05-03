@@ -28,6 +28,15 @@ def main():
                 cur_line[1] = str(unique_users[user][1])
 
                 out_file.write("\t".join(cur_line))
+    #save the unique user info so we can translate back after mining
+    with open("simple_data/data_key", "w") as data_key:
+        for user in unique_users:
+            data_key.write(user)
+            data_key.write("\t")
+            data_key.write(str(unique_users[user][0]))
+            data_key.write("\t")
+            data_key.write(str(unique_users[user][1]))
+            data_key.write("\n")
 
 
 
