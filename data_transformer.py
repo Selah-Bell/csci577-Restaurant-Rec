@@ -45,7 +45,6 @@ def transform_sequences(sequences):
     restaurant_features = load_restaurant_features()
     for seq_id in range(len(sequences)):
         old_sequence = sequences[seq_id]
-        print(old_sequence)
         new_sequence = [] 
         for time_stamp in range(len(old_sequence)):
             transaction = [str(seq_id), str(time_stamp)]
@@ -63,11 +62,13 @@ def transform_sequences(sequences):
                 action = old_sequence[time_stamp][-1]
 
             event_set = restaurant_features[restaurant_id]
-            event_set.append(action)
             for event in event_set:
                 if event not in unique_events:
                     unique_events[event] = str(len(unique_events))
                 transaction.append(unique_events[event])
+            if action not in unique_events:
+                unique_events[action] = str(len(unique_events))
+            transaction.append(unique_events[action])
 
             new_sequence.append(transaction)
         sequences[seq_id] = new_sequence
@@ -80,7 +81,8 @@ def save_sequences(sequences):
         count = 0
         for sequence in sequences:
             for transaction in sequence:
-                print(count+=1)
+                count+=1
+                print(count)
                 out_file.write("\t".join(transaction) + "\n")
 
 def save_unique_events(event_dict):
