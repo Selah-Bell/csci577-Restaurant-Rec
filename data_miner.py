@@ -7,7 +7,7 @@
 #           of events.
 #       -note that all atmoic elements of this datastructure must be integers
 from pycspade.helpers import spade, print_result
-
+import sys
 
 """my_data = [
     [1, 10, [3, 4]],
@@ -20,16 +20,13 @@ from pycspade.helpers import spade, print_result
     [4, 10, [4, 7, 8]],
     [4, 20, [2, 6]],
     [4, 25, [1, 7, 8]]
-]
-print(my_data)"""
+]"""
 #result = spade(data=data, support=0.5)
 #print(result["seqstrm"])
 
-def load_event_keys
 
 def load_data(filename):
     data = []
-    y = 0
     with open(filename, "r") as in_file:
         for line in in_file:
             cur_line = line.split("\t")
@@ -59,29 +56,44 @@ def load_event_keys(key_file):
             data_key[cur_line[0]] = cur_line[1]
     return data_key
 
+def print_output(event_key, output):
+    for line in output:
+        inline = str(line)
+        outline = ""
+        x = 0
+        while x < len(inline):
+            if inline[x] == "(":
+                outline += "("
+                x += 1
+                key = ""
+                while inline[x] != ")":
+                    while inline[x] != ")" and inline[x] != ",":
+                        key += inline[x]
+                        x += 1
+                    outline += event_key[key]
+                    if inline[x] == ",":
+                        outline += ","
+                        x += 1
+                outline += ")"
+            else:
+                outline += inline[x]
+            x += 1
+        print(outline)
+
+
 def main():
-    my_data = load_data()
+    data_file = sys.argv[1]
+    key_file = sys.argv[2]
+    data_size = int(sys.argv[3])
+    support = float(sys.argv[4])
 
-    result = spade(data=my_data[0:44400], support=support)
+    my_data = load_data(data_file)
+    event_key = load_event_keys(key_file)
+
+    result = spade(data=my_data[0:data_size], support=support)
     output = result["mined_objects"]
-    data_key = translate_data(event_translation_file)
-    #print(data_key)
-    for x in range(len(output)):
-        output[x] = str(output[x])
-        to_replace = ""
-        i = 0
-        while output[x][i] != "(":
-            i += 1
-        i += 1
-        while output[x][i] != ")":
-            to_replace += output[x][i]
-            i += 1
-        #print(to_replace)
-        output[x] = output[x].replace(to_replace, data_key[to_replace])
-    for x in output:
-        print(x)
-    #print("count:", count)
 
+    print_output(event_key, output)
 
 if __name__ == "__main__":
     main()

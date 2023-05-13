@@ -42,6 +42,7 @@ def load_restaurant_features():
 
 def transform_sequences(sequences):
     unique_events = {}
+    features = load_features()
     restaurant_features = load_restaurant_features()
     for seq_id in range(len(sequences)):
         old_sequence = sequences[seq_id]
@@ -63,12 +64,14 @@ def transform_sequences(sequences):
 
             event_set = restaurant_features[restaurant_id]
             for event in event_set:
-                if event not in unique_events:
-                    unique_events[event] = str(len(unique_events))
-                transaction.append(unique_events[event])
-            if action not in unique_events:
-                unique_events[action] = str(len(unique_events))
-            transaction.append(unique_events[action])
+                feature = features[event]
+                if feature not in unique_events:
+                    unique_events[feature] = str(len(unique_events))
+                transaction.append(unique_events[feature])
+            feature = features[action]
+            if feature not in unique_events:
+                unique_events[feature] = str(len(unique_events))
+            transaction.append(unique_events[feature])
 
             new_sequence.append(transaction)
         sequences[seq_id] = new_sequence
@@ -85,8 +88,9 @@ def save_sequences(sequences):
                 print(count)
                 out_file.write("\t".join(transaction) + "\n")
 
-def save_unique_events(event_dict):
-    print(event_dict)
+
+
+def load_features():
     events = {"L": "browse", "M": "cheaper", "N": "nicer", "O": "closer", "P": "more traditional", "Q": "more creative", "R": "more lively", "S": "quieter", "T": "change cuisine", "Z": "end transaction"}
     #add restaurant features to list of events in format {id, Feature description}
     with open("original_data/data/features.txt", "r") as f:
@@ -96,13 +100,16 @@ def save_unique_events(event_dict):
             feature[-1] = feature[-1].strip("\n")
             #print(feature)
             events[str(feature[0])] = str(feature[1])
-    #print(events)
+    return events
+
+def save_unique_events(event_dict):
+    print(event_dict)
     #create kety        
     with open("transformed_data/event_key", "w") as event_key:
         for event, ID in event_dict.items():
             event_key.write(str(ID))
             event_key.write("\t")
-            event_key.write(events[event])
+            event_key.write(event)
             event_key.write("\n")
 
 
