@@ -9,7 +9,7 @@
 from pycspade.helpers import spade, print_result
 import sys
 
-"""my_data = [
+my_data = [
     [1, 10, [3, 4]],
     [1, 15, [1, 2, 3]],
     [1, 20, [1, 2, 6]],
@@ -20,7 +20,7 @@ import sys
     [4, 10, [4, 7, 8]],
     [4, 20, [2, 6]],
     [4, 25, [1, 7, 8]]
-]"""
+]
 #result = spade(data=data, support=0.5)
 #print(result["seqstrm"])
 
@@ -88,12 +88,14 @@ def main():
     support = float(sys.argv[4])
 
     my_data = load_data(data_file)
+    print(len(my_data))
     event_key = load_event_keys(key_file)
 
-    result = spade(data=my_data[0:data_size], support=support)
+    result = spade(data=my_data[0:data_size], support=support, maxgap=1)
     output = result["mined_objects"]
-
     print_output(event_key, output)
+    #for x in output:
+    #    print(x)
 
 if __name__ == "__main__":
     main()
